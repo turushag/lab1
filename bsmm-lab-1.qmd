@@ -2,7 +2,7 @@
 title: "BSMM-lab-1"
 subtitle: "BSMM 8740 Fall 2023"
 author: "Turusha"
-date: "18th Sept"
+date: "2023-09-18"
 format: html
 editor: visual
 self-contained: true
@@ -14,9 +14,10 @@ Load packages and data:
 
 ```{r load-pkg-data}
 #| message: false
-install.packages("Lahman")
+##install.packages("Lahman")
 library(Lahman)
 library(magrittr)
+library(tidyverse)
 ```
 
 ## Exercises
@@ -47,7 +48,7 @@ my_mets %>%
 
 ```{r}
 mets_ben <- Teams %>% 
-  dplyr::select(yearID, teamID,G, R, RA) %>%
+  dplyr::select(yearID, teamID,G, R, RA,W,L) %>%
   dplyr::filter(teamID == "NYN" & yearID %in% 2004:2012)
 mets_ben
 ```
@@ -68,32 +69,85 @@ mets_ben
 
 ```{r}
 mets_ben <- mets_ben |>
-  dplyr::mutate(W_hat = WPct*(W+L))
+  dplyr::mutate(W_hat = WPct*G)
 mets_ben
 ```
 
-### Exercise 5 
+### Exercise 5
 
 ```{r}
-
+mets_ben <- mets_ben %>%
+dplyr:: mutate(Performance = ifelse(W > W_hat, "Better", "Worse"))
+mets_ben
 ```
 
 ### Exercise 6
 
-...
+```{r}
+dplyr::arrange(mets_ben, desc(W))
+```
 
 ### Exercise 7
 
-...
+```{r}
+mets_ben <- mets_ben %>% 
+  dplyr::mutate(Diff = W-W_hat ) |>
+  dplyr::arrange(desc(Diff))
+
+```
 
 ### Exercise 8
 
-...
+```{r}
+mets_ben
+```
 
-### Exercise 9
+```{r}
+mets_ben |>
+  dplyr::summarise(
+    num_years = n(), 
+    total_W = sum(W), 
+    total_L = sum(L), 
+    total_WPct =mean(WPct), 
+    sum_resid = sum(Diff)
+  )
+```
 
-...
+### Exercise 9 _ Data not Available
+
 
 ### Exercise 10
+```{r}
+library(dplyr)
+mets_ben <- mets_ben %>%
+  dplyr::mutate(
+    gm = case_when(
+      yearID == 2004 ~ "Jim Duquette",
+      yearID >= 2005 & yearID <= 2010 ~ "Omar Minaya",
+      yearID >= 2011 ~ "Sandy Alderson"
+    )
+  )
+mets_ben
+```
 
-...
+
+##Exercise 11
+
+```{r Group by the manager (gm) variable and summarize the data}
+ 
+manager_summary <- mets_ben %>%
+  group_by(gm) %>%
+  summarize(
+    num_years = n(),
+    total_W = sum(W),
+    total_L = sum(L),
+    total_WPct = mean(WPct),
+    sum_resid = sum(Diff)
+  )
+```
+```{r}
+manager_summary
+```
+
+
+
