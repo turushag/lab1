@@ -1,8 +1,8 @@
 ---
 title: "BSMM-lab-1"
 subtitle: "BSMM 8740 Fall 2023"
-author: "Add your name here"
-date: "Add the date here"
+author: "Turusha"
+date: "18th Sept"
 format: html
 editor: visual
 self-contained: true
@@ -14,7 +14,9 @@ Load packages and data:
 
 ```{r load-pkg-data}
 #| message: false
+install.packages("Lahman")
 library(Lahman)
+library(magrittr)
 ```
 
 ## Exercises
@@ -25,19 +27,46 @@ library(Lahman)
 dplyr::glimpse(Teams)
 ```
 
-The `Teams` dataset has \_\_\_ observations and \_\_\_ variables.
-
 ### Exercise 2
 
-...
+```{r}
+mets <- Teams %>% 
+  dplyr::filter(teamID == "NYN")
+my_mets <- mets %>% 
+  dplyr::filter(yearID %in% 2004:2012)
+my_mets %>% 
+  dplyr::select(yearID, teamID, W, L)
+
+```
 
 ### Exercise 3
 
-...
+```{r}
+mets_ben <- Teams %>% 
+  dplyr::select(yearID, teamID, W, L, R, RA) %>%
+  dplyr::filter(teamID == "NYN" & yearID %in% 2004:2012)
+mets_ben
+```
+
+```{r}
+mets_ben <- mets_ben %>% 
+  dplyr::rename(Rs = R)    # new name = old name
+mets_ben
+```
 
 ### Exercise 4
 
-...
+```{r}
+mets_ben <- mets_ben %>% 
+  dplyr::mutate(WPct = W / (W + L))
+mets_ben
+```
+
+```{r}
+mets_ben <- mets_ben |>
+  dplyr::mutate(W_hat = 1 / (1 + (RA/RS)^2))
+mets_ben
+```
 
 ### Exercise 5
 
