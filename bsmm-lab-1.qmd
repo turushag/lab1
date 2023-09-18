@@ -27,6 +27,10 @@ library(magrittr)
 dplyr::glimpse(Teams)
 ```
 
+```{r}
+help("Teams")
+```
+
 ### Exercise 2
 
 ```{r}
@@ -35,7 +39,7 @@ mets <- Teams %>%
 my_mets <- mets %>% 
   dplyr::filter(yearID %in% 2004:2012)
 my_mets %>% 
-  dplyr::select(yearID, teamID, W, L)
+  dplyr::select(yearID, G, W, L)
 
 ```
 
@@ -43,7 +47,7 @@ my_mets %>%
 
 ```{r}
 mets_ben <- Teams %>% 
-  dplyr::select(yearID, teamID, W, L, R, RA) %>%
+  dplyr::select(yearID, teamID,G, R, RA) %>%
   dplyr::filter(teamID == "NYN" & yearID %in% 2004:2012)
 mets_ben
 ```
@@ -58,19 +62,21 @@ mets_ben
 
 ```{r}
 mets_ben <- mets_ben %>% 
-  dplyr::mutate(WPct = W / (W + L))
+  dplyr::mutate(WPct =  1 / (1 + (RA/Rs)*2))
 mets_ben
 ```
 
 ```{r}
 mets_ben <- mets_ben |>
-  dplyr::mutate(W_hat = 1 / (1 + (RA/RS)^2))
+  dplyr::mutate(W_hat = WPct*(W+L))
 mets_ben
 ```
 
-### Exercise 5
+### Exercise 5 
 
-...
+```{r}
+
+```
 
 ### Exercise 6
 
